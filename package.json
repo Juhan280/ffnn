@@ -1,0 +1,21 @@
+{
+  "name": "ffnn-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "target/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --enable-source-maps ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/seedrandom": "^3.0.5",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "seedrandom": "^3.0.5"
+  }
+}

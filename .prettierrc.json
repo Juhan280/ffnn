@@ -1,0 +1,5 @@
+{
+  "useTabs": true,
+  "arrowParens": "avoid",
+  "overrides": [{ "files": ["package.json"], "options": { "useTabs": false } }]
+}
