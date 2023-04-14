@@ -7,7 +7,7 @@ import {
 	RouletteWheelSelection,
 	GaussianMutation,
 } from "./genetic-algorithm/index";
-// import { Network } from "./neural-network/Network.js";
+import { Network } from "./neural-network/Network.js";
 
 const rng = {
 	algorithm: sr.alea,
@@ -20,6 +20,7 @@ const rng = {
 };
 
 function activation(value: number) {
+	// sigmoid function
 	return 1 / (1 + Math.E ** -value);
 }
 
@@ -36,34 +37,31 @@ class MyAgent extends Agent {
 	}
 
 	fitness(): number {
-		return [...this.#chromosome].reduce(
-			(acc, gene) => acc * gene + rng.generate(-0.1, 0.1),
-			1
-		);
+		return [...this.#chromosome].reduce((acc, gene) => acc + gene);
 	}
 }
 
-let myAgents = [
-	new MyAgent(new Chromosome([0, 0, 0])),
-	new MyAgent(new Chromosome([1, 1, 2])),
-	new MyAgent(new Chromosome([2, 3, 1])),
-	new MyAgent(new Chromosome([4, 0, 2])),
-];
-
-const selectionMethod = new RouletteWheelSelection();
-const crossoverMethod = new UniformCrossover();
-const mutationMethod = new GaussianMutation(0.5, 1.5);
-
-const geneticAlgorithm = new GeneticAlgorithm(
-	selectionMethod,
-	crossoverMethod,
-	mutationMethod
+let myAgents = Array.from(
+	{ length: 4 },
+	() =>
+		new MyAgent(
+			new Chromosome(Array.from({ length: 5 }, () => rng.generate(-5, 5)))
+		)
 );
 
-for (let i = 0; i < 500; i++) {
+console.log("Before:");
+myAgents.map(agent => console.log([...agent.chromosome()], agent.fitness()));
+
+const geneticAlgorithm = new GeneticAlgorithm(
+	new RouletteWheelSelection(),
+	new UniformCrossover(),
+	new GaussianMutation(0.33, 3)
+);
+
+for (let i = 0; i < 100; i++) {
 	process.stdout.write("\rEvolving gen " + (i + 1));
 	myAgents = geneticAlgorithm.evolve(MyAgent, myAgents, rng);
 }
-console.log();
 
-myAgents.map(agent => console.log(agent.chromosome()));
+console.log("\nAfter:");
+myAgents.map(agent => console.log([...agent.chromosome()], agent.fitness()));
