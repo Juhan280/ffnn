@@ -2,10 +2,10 @@ import { RNG } from "../RNG.js";
 import { Neuron } from "./Neuron.js";
 
 export class Layer {
-	#neurons: Neuron[];
+	#neurons: readonly Neuron[];
 	#inputSize: number;
 
-	private constructor(neurons: Neuron[], inputSize: number) {
+	private constructor(neurons: readonly Neuron[], inputSize: number) {
 		this.#neurons = neurons;
 		this.#inputSize = inputSize;
 	}
@@ -45,7 +45,7 @@ export class Layer {
 		return new Layer(neurons, input_neurons);
 	}
 
-	propagate(inputs: number[], activation: (value: number) => number) {
+	propagate(inputs: readonly number[], activation: (value: number) => number) {
 		return this.#neurons.map(neuron => neuron.propagate(inputs, activation));
 	}
 }

@@ -1,37 +1,36 @@
 import { RNG } from "../RNG.js";
+import { Agent } from "./Agent.js";
 import { Chromosome } from "./Chromosome.js";
-import { Agent } from "./Individual.js";
 import { CrossoverMethod, MutationMethod, SelectionMethod } from "./Methods.js";
 
-export class GeneticAlgorithm<
-	S extends SelectionMethod,
-	C extends CrossoverMethod,
-	M extends MutationMethod
-> {
+export class GeneticAlgorithm {
 	constructor(
-		private selection_method: S,
-		private crossover_method: C,
-		private mutation_method: M
+		private selectionMethod: SelectionMethod,
+		private crossoverMethod: CrossoverMethod,
+		private mutationMethod: MutationMethod
 	) {}
 
 	evolve<A extends Agent>(
-		Agent: new (chromosome: Chromosome) => A,
+		Agent: new (neuronCounts: readonly number[], chromosome: Chromosome) => A,
 		population: A[],
 		rng: RNG
 	) {
-		if (!population.length) throw new Error("expected at least 1 Individual");
+		if (!population.length) throw new Error("expected at least 1 Agent");
+
+		const { neuronCounts } = population[0];
 
 		return population.map(() => {
-			const parent_a = this.selection_method
+			const parent_a = this.selectionMethod
 				.select(population, rng)
 				.chromosome();
-			const parent_b = this.selection_method
+			const parent_b = this.selectionMethod
 				.select(population, rng)
 				.chromosome();
 
-			const child = this.crossover_method.crossover(parent_a, parent_b, rng);
-			this.mutation_method.mutate(child, rng);
-			return new Agent(child);
+			const child = this.crossoverMethod.crossover(parent_a, parent_b, rng);
+			this.mutationMethod.mutate(child, rng);
+
+			return new Agent(neuronCounts, child);
 		});
 	}
 }

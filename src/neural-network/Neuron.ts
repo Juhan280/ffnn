@@ -42,7 +42,7 @@ export class Neuron {
 		return new Neuron(bias, weights);
 	}
 
-	propagate(inputs: number[], activation: (value: number) => number) {
+	propagate(inputs: readonly number[], activation: (value: number) => number) {
 		const value = inputs.reduce(
 			(acc, cur, i) => acc + cur * this.#weights[i],
 			this.bias

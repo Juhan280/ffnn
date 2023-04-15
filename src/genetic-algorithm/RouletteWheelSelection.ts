@@ -1,5 +1,5 @@
 import { RNG } from "../RNG.js";
-import { Agent } from "./Individual.js";
+import { Agent } from "./Agent.js";
 import { SelectionMethod } from "./Methods.js";
 
 export class RouletteWheelSelection implements SelectionMethod {

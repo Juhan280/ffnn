@@ -3,7 +3,7 @@ import { Layer } from "./Layer.js";
 
 export class Network {
 	private constructor(
-		private layers: Layer[],
+		private layers: readonly Layer[],
 		private activation: (value: number) => number
 	) {}
 
@@ -19,18 +19,18 @@ export class Network {
 	}
 
 	static random(
-		layerTopologies: number[],
+		neuronCounts: readonly number[],
 		activation: (value: number) => number,
 		rng: RNG
 	) {
-		if (layerTopologies.length <= 1)
+		if (neuronCounts.length <= 1)
 			throw new RangeError("there must be at least 2 layers");
 
-		const layers: Layer[] = Array(layerTopologies.length - 1);
+		const layers: Layer[] = Array(neuronCounts.length - 1);
 
-		for (let i = 0; i < layerTopologies.length - 1; i++) {
-			const input_neurons = layerTopologies[i];
-			const output_neurons = layerTopologies[i + 1];
+		for (let i = 0; i < neuronCounts.length - 1; i++) {
+			const input_neurons = neuronCounts[i];
+			const output_neurons = neuronCounts[i + 1];
 
 			layers[i] = Layer.random(input_neurons, output_neurons, rng);
 		}
@@ -39,19 +39,19 @@ export class Network {
 	}
 
 	static fromWeights(
-		layerTopologies: number[],
+		neuronCounts: readonly number[],
 		activation: (value: number) => number,
 		weights: Iterable<number>
 	) {
-		if (layerTopologies.length <= 1)
+		if (neuronCounts.length <= 1)
 			throw new RangeError("there must be at least 2 layers");
 
 		const weightsIter = weights[Symbol.iterator]();
-		const layers: Layer[] = Array(layerTopologies.length - 1);
+		const layers: Layer[] = Array(neuronCounts.length - 1);
 
-		for (let i = 0; i < layerTopologies.length - 1; i++) {
-			const input_neurons = layerTopologies[i];
-			const output_neurons = layerTopologies[i + 1];
+		for (let i = 0; i < neuronCounts.length - 1; i++) {
+			const input_neurons = neuronCounts[i];
+			const output_neurons = neuronCounts[i + 1];
 
 			layers[i] = Layer.fromWeights(input_neurons, output_neurons, weightsIter);
 		}
@@ -59,7 +59,7 @@ export class Network {
 		return new Network(layers, activation);
 	}
 
-	propagate(inputs: number[]) {
+	propagate(inputs: readonly number[]) {
 		if (inputs.length !== this.layers[0].inputSize)
 			throw new RangeError(
 				"input length must be equal to tye amount of input neurons"
