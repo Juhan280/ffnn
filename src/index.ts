@@ -8,18 +8,15 @@ import {
 } from "./genetic-algorithm/index.js";
 import { Network } from "./neural-network/Network.js";
 import { rng } from "./RNG.js";
+import { activation } from "./utils.js";
 
-function activation(value: number) {
-	// sigmoid function
-	return 1 / (1 + Math.E ** -value);
-}
-
+/*
 class MyAgent extends Agent {
 	#chromosome: Chromosome;
 	#neuronCounts: readonly number[];
 	#network: Network;
 
-	constructor(neuronCounts: readonly number[], chromosome: Chromosome) {
+	constructor(fitness: number, chromosome: Chromosome) {
 		super();
 		this.#chromosome = chromosome;
 		this.#neuronCounts = neuronCounts;
@@ -34,7 +31,7 @@ class MyAgent extends Agent {
 		return this.#chromosome;
 	}
 
-	fitness(): number {
+	get fitness(): number {
 		return [...this.#chromosome].reduce((acc, gene) => acc + gene);
 	}
 
@@ -51,6 +48,10 @@ class MyAgent extends Agent {
 		return new MyAgent(neuronCounts, chromosome);
 	}
 
+	static create(chromosome: Chromosome) {
+		return new MyAgent(0, chromosome);
+	}
+
 	static fromNetwork(network: Network) {
 		return new MyAgent([], new Chromosome(network.weights()));
 	}
@@ -59,7 +60,7 @@ class MyAgent extends Agent {
 let myAgents = Array.from({ length: 4 }, () => MyAgent.random([2, 3, 2]));
 
 console.log("Before:");
-myAgents.map(agent => console.log([...agent.chromosome()], agent.fitness()));
+myAgents.map(agent => console.log([...agent.chromosome()], agent.fitness));
 
 const geneticAlgorithm = new GeneticAlgorithm(
 	new RouletteWheelSelection(),
@@ -69,8 +70,9 @@ const geneticAlgorithm = new GeneticAlgorithm(
 
 for (let i = 0; i < 100; i++) {
 	process.stdout.write("\rEvolving gen " + (i + 1));
-	myAgents = geneticAlgorithm.evolve(MyAgent, myAgents, rng);
+	myAgents = geneticAlgorithm.evolve(MyAgent.create, myAgents, rng);
 }
 
 console.log("\nAfter:");
-myAgents.map(agent => console.log([...agent.chromosome()], agent.fitness()));
+myAgents.map(agent => console.log([...agent.chromosome()], agent.fitness));
+*/

@@ -13,7 +13,7 @@ export class Animal {
 	#vision: readonly number[];
 	#speed: number;
 	readonly eye: Eye;
-	readonly satiation: number;
+	satiation: number;
 
 	private constructor(config: Config, readonly brain: Brain, rng: RNG) {
 		this.#position = [rng.generate(0, 1), rng.generate(0, 1)];
@@ -63,7 +63,9 @@ export class Animal {
 	}
 
 	processMovement() {
-		const TODO: never = "make logic to update the position";
+		// i am not sure ifnit will work as expected
+		this.#position[0] += this.speed * Math.cos(this.rotation);
+		this.#position[1] += this.speed * Math.sin(this.rotation);
 
 		this.#position[0] = clamp(this.#position[0], 0, 1);
 		this.#position[1] = clamp(this.#position[1], 0, 1);

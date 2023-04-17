@@ -12,7 +12,7 @@ export class Statistics {
 		const { length } = population;
 
 		const fitnesses = population
-			.map(agent => agent.fitness())
+			.map(agent => agent.fitness)
 			.sort((a, b) => a - b);
 
 		this.min_fitness = fitnesses[0];

@@ -5,7 +5,7 @@ import { SelectionMethod } from "./Methods.js";
 export class RouletteWheelSelection implements SelectionMethod {
 	select<A extends Agent>(population: readonly A[], rng: RNG): A {
 		const totalFitness = population.reduce(
-			(acc, agent) => acc + agent.fitness(),
+			(acc, agent) => acc + agent.fitness,
 			0
 		);
 
@@ -14,7 +14,7 @@ export class RouletteWheelSelection implements SelectionMethod {
 		let current = 0;
 
 		for (const agent of population)
-			if ((current += agent.fitness()) > selected) return agent;
+			if ((current += agent.fitness) > selected) return agent;
 		return population.at(-1)!;
 	}
 }
