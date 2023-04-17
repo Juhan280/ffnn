@@ -18,17 +18,25 @@ export class Animal {
 		this.#position = [rng.generate(0, 1), rng.generate(0, 1)];
 		this.#rotation = rng.generate(-Math.PI, Math.PI);
 		this.#vision = Array(config.eye_cells).fill(0);
-		this.#speed = config.sim_speed_max; // XXX: need to look into that later
+		this.#speed = rng.generate(0, config.sim_speed_max); // XXX: need to look into that later
 		this.eye = new Eye(config);
 		this.satiation = 0;
 	}
 
-	get position(): Vector2<false> {
+	get position(): Vector2<true> {
 		return this.#position;
+	}
+
+	set position(value: Vector2<true>) {
+		this.#position = value;
 	}
 
 	get rotation() {
 		return this.#rotation;
+	}
+
+	set rotation(value: number) {
+		this.#rotation = value;
 	}
 
 	get vision() {
@@ -62,9 +70,10 @@ export class Animal {
 	}
 
 	processMovement() {
+		const time = 1;
 		// i am not sure if it will work as expected
-		this.#position[0] += this.speed * Math.cos(this.rotation);
-		this.#position[1] += this.speed * Math.sin(this.rotation);
+		this.#position[0] += this.speed * Math.cos(this.#rotation) * time;
+		this.#position[1] += this.speed * Math.sin(this.#rotation) * time;
 
 		this.#position[0] = clamp(this.#position[0], 0, 1);
 		this.#position[1] = clamp(this.#position[1], 0, 1);

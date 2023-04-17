@@ -4,5 +4,6 @@ export function clamp(value: number, min: number, max: number) {
 
 export function activation(value: number) {
 	// sigmoid function
-	return 1 / (1 + Math.E ** -value);
+	//return 1 / (1 + Math.E ** -value);
+	return Math.max(value, 0);
 }

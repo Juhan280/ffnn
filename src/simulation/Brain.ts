@@ -5,8 +5,8 @@ import { clamp } from "../utils.js";
 import { Config } from "./Config.js";
 
 export class Brain {
-	readonly linear_accel: number;
-	readonly angular_accel: number;
+	linear_accel: number;
+	angular_accel: number;
 
 	private constructor(config: Config, public readonly network: Network) {
 		this.linear_accel = config.sim_linear_accel;
@@ -22,8 +22,14 @@ export class Brain {
 		// const speed = clamp(r0 + r1, -this.linear_accel, this.linear_accel);
 		// const rotation = clamp(r0 + r1, -this.angular_accel, this.angular_accel);
 
-		const speed = clamp(r0, -this.linear_accel, this.linear_accel);
-		const rotation = clamp(r1, -this.angular_accel, this.angular_accel);
+		// const speed = clamp(r0, -this.linear_accel, this.linear_accel);
+		// const rotation = clamp(r1, -this.angular_accel, this.angular_accel);
+
+		const speed = r0 + r1;
+		const rotation = r0 - r1;
+
+		this.linear_accel = speed;
+		this.angular_accel += rotation;
 
 		return [speed, rotation];
 	}
@@ -44,6 +50,7 @@ export class Brain {
 		chromosome: Chromosome,
 		activation: ActivationFunction
 	) {
+		//const FIXEME: never = "it shouldn't be a constant";
 		return new Brain(
 			config,
 			Network.fromWeights(Brain.topology(config), activation, chromosome)

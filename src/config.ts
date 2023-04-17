@@ -17,8 +17,8 @@ export const config: Config = {
 	sim_speed_max: 0.005,
 	sim_linear_accel: 0.2,
 	sim_angular_accel: Math.PI / 2,
-	sim_generation_length: 2500,
+	sim_generation_length: 1000,
 
-	world_animals: 40,
-	world_foods: 60,
+	world_animals: 5,
+	world_foods: 10,
 };

@@ -12,19 +12,13 @@ import { Statistics } from "./Statistics.js";
 import { World } from "./World.js";
 
 export class Simulation {
-	#generation: number;
-
 	constructor(
 		readonly config: Config,
 		readonly world: World,
 		private age: number,
-		generation: number
+		public generation: number
 	) {
-		this.#generation = generation;
-	}
-
-	get generation() {
-		return this.#generation;
+		this.generation = generation;
 	}
 
 	step(rng: RNG) {
@@ -49,7 +43,7 @@ export class Simulation {
 					animal.position[1] - food.position[1]
 				);
 
-				if (distance > this.config.food_size) continue;
+				if (distance > 0.015) continue;
 				animal.satiation++;
 				food.position = [rng.generate(0, 1), rng.generate(0, 1)];
 			}
@@ -71,7 +65,7 @@ export class Simulation {
 
 	evolve(rng: RNG) {
 		this.age = 0;
-		this.#generation++;
+		this.generation++;
 
 		const agents = this.world.animals.map(Bird.fromAnimal);
 
@@ -105,6 +99,6 @@ export class Simulation {
 		for (const food of this.world.foods)
 			food.position = [rng.generate(0, 1), rng.generate(0, 1)];
 
-		return new Statistics(this.#generation - 1, statistics);
+		return new Statistics(this.generation - 1, statistics);
 	}
 }

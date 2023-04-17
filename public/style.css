@@ -1,0 +1,10 @@
+body {
+	background-color: lightgoldenrodyellow;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#world {
+	background-color: lightgreen;
+}
