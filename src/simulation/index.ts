@@ -4,7 +4,7 @@ import {
 	RouletteWheelSelection,
 	UniformCrossover,
 } from "../genetic-algorithm/index.js";
-import { RNG } from "../RNG.js";
+import { RNG } from "../types.js";
 import { activation } from "../utils.js";
 import { Bird } from "./Bird.js";
 import { Config } from "./Config.js";

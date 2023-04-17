@@ -1,4 +1,4 @@
-import { RNG } from "../RNG.js";
+import { RNG } from "../types.js";
 import { Chromosome } from "./Chromosome.js";
 import { CrossoverMethod } from "./Methods.js";
 

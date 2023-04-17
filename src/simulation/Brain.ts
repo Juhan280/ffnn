@@ -1,7 +1,6 @@
 import { Chromosome } from "../genetic-algorithm/index.js";
 import { Network } from "../neural-network/Network.js";
-import { RNG } from "../RNG.js";
-import { ActivationFunction } from "../types.js";
+import { ActivationFunction, RNG } from "../types.js";
 import { clamp } from "../utils.js";
 import { Config } from "./Config.js";
 

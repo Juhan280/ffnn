@@ -1,5 +1,4 @@
-import { RNG } from "../RNG";
-import { ActivationFunction } from "../types";
+import { ActivationFunction, RNG } from "../types.js";
 import { Animal } from "./Animal.js";
 import { Config } from "./Config.js";
 import { Food } from "./Food.js";

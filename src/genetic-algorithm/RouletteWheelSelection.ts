@@ -1,4 +1,4 @@
-import { RNG } from "../RNG.js";
+import { RNG } from "../types.js";
 import { Agent } from "./Agent.js";
 import { SelectionMethod } from "./Methods.js";
 

@@ -1,5 +1,4 @@
-import { RNG } from "../RNG.js";
-import { Vector2 } from "../types.js";
+import { RNG, Vector2 } from "../types.js";
 
 export class Food {
 	constructor(public position: Vector2) {}

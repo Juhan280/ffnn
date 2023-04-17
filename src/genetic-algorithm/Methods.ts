@@ -1,6 +1,6 @@
 import { Agent } from "./Agent.js";
 import { Chromosome } from "./Chromosome";
-import type { RNG } from "../RNG.js";
+import type { RNG } from "../types.js";
 
 export interface SelectionMethod {
 	select<A extends Agent>(population: A[], rng: RNG): A;

@@ -1,4 +1,4 @@
-import { RNG } from "../RNG.js";
+import { RNG } from "../types.js";
 import { Layer } from "./Layer.js";
 
 export class Network {

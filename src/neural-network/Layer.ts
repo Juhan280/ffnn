@@ -1,4 +1,4 @@
-import { RNG } from "../RNG.js";
+import { RNG } from "../types.js";
 import { Neuron } from "./Neuron.js";
 
 export class Layer {

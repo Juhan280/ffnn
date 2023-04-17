@@ -1,6 +1,5 @@
-import { Chromosome } from "../genetic-algorithm";
-import { RNG } from "../RNG.js";
-import { ActivationFunction, Vector2 } from "../types.js";
+import { Chromosome } from "../genetic-algorithm/index.js";
+import { ActivationFunction, RNG, Vector2 } from "../types.js";
 import { clamp } from "../utils.js";
 import { Brain } from "./Brain.js";
 import { Config } from "./Config.js";
@@ -63,7 +62,7 @@ export class Animal {
 	}
 
 	processMovement() {
-		// i am not sure ifnit will work as expected
+		// i am not sure if it will work as expected
 		this.#position[0] += this.speed * Math.cos(this.rotation);
 		this.#position[1] += this.speed * Math.sin(this.rotation);
 

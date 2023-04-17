@@ -1,4 +1,4 @@
-import { RNG } from "../RNG";
+import { RNG } from "../types.js";
 
 export class Neuron {
 	#weights: number[];
