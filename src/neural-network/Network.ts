@@ -3,19 +3,26 @@ import { Layer } from "./Layer.js";
 
 export class Network {
 	private constructor(
-		private layers: readonly Layer[],
-		private activation: (value: number) => number
+		readonly layers: readonly Layer[],
+		readonly activation: (value: number) => number
 	) {}
 
 	*weights() {
-		for (const layer of this.layers) {
-			const iterator = layer.neurons();
-			let { value, done } = iterator.next();
-			while (!done) {
-				yield value!;
-				({ value, done } = iterator.next());
-			}
-		}
+		for (const layer of this.layers)
+			for (const neuron of layer.neurons)
+				for (const weight of neuron.weights) yield weight;
+	}
+
+	propagate(inputs: readonly number[]) {
+		if (inputs.length !== this.layers[0].neurons[0].weights.length)
+			throw new RangeError(
+				"input length must be equal to tye amount of input neurons"
+			);
+
+		return this.layers.reduce(
+			(inputs, layer) => layer.propagate(inputs, this.activation),
+			inputs
+		);
 	}
 
 	static random(
@@ -57,17 +64,5 @@ export class Network {
 		}
 
 		return new Network(layers, activation);
-	}
-
-	propagate(inputs: readonly number[]) {
-		if (inputs.length !== this.layers[0].inputSize)
-			throw new RangeError(
-				"input length must be equal to tye amount of input neurons"
-			);
-
-		return this.layers.reduce(
-			(inputs, layer) => layer.propagate(inputs, this.activation),
-			inputs
-		);
 	}
 }
