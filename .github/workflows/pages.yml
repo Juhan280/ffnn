@@ -6,7 +6,7 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-permussions:
+permissions:
   contents: write
 
 jobs:
