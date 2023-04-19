@@ -1,0 +1,19 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - uses: rayluo/github-pages-overwriter@v1.3
+        with:
+          source-directory: public
