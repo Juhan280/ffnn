@@ -9,8 +9,10 @@ export class Network {
 
 	*weights() {
 		for (const layer of this.layers)
-			for (const neuron of layer.neurons)
+			for (const neuron of layer.neurons) {
+				yield neuron.bias;
 				for (const weight of neuron.weights) yield weight;
+			}
 	}
 
 	propagate(inputs: readonly number[]) {
