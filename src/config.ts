@@ -4,7 +4,7 @@ export const config: Config = {
 	brain_neurons: 9,
 
 	eye_fov_range: 0.25,
-	eye_fov_angle: Math.PI * 1.25,
+	eye_fov_angle: Math.PI * 0.75,
 	eye_cells: 9,
 
 	food_size: 0.01,
@@ -19,6 +19,6 @@ export const config: Config = {
 	sim_angular_accel: Math.PI / 2,
 	sim_generation_length: 1000,
 
-	world_animals: 5,
-	world_foods: 10,
+	world_animals: 10,
+	world_foods: 100,
 };

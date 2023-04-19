@@ -11,7 +11,7 @@ export class Statistics {
 			`generation: ${this.generation}\n` +
 			`min[${this.geneticAlgorithm.min_fitness.toFixed(
 				2
-			)}] max[${this.geneticAlgorithm.min_fitness.toFixed(
+			)}] max[${this.geneticAlgorithm.max_fitness.toFixed(
 				2
 			)}] avg[${this.geneticAlgorithm.avg_fitness.toFixed(
 				2

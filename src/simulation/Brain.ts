@@ -25,8 +25,8 @@ export class Brain {
 		// const speed = clamp(r0, -this.linear_accel, this.linear_accel);
 		// const rotation = clamp(r1, -this.angular_accel, this.angular_accel);
 
-		const speed = r0 + r1;
-		const rotation = r0 - r1;
+		const speed = r0;
+		const rotation = r1;
 
 		this.linear_accel = speed;
 		this.angular_accel += rotation;

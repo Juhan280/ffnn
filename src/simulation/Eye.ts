@@ -30,7 +30,8 @@ export class Eye {
 			if (distance > this.fov_range) continue;
 
 			// I am pretty sure that this formula of mine is wrong.
-			const angle = rotation - Math.acos(x / Math.hypot(x, y));
+			const angle = Math.PI + rotation - Math.acos(x / Math.hypot(x, y));
+			// console.log({ rotation, hypot: Math.hypot(x, y), angle, distance });
 
 			if (Math.abs(angle) > this.fov_angle / 2) continue;
 
