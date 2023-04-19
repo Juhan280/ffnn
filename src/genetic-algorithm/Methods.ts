@@ -3,7 +3,7 @@ import { Chromosome } from "./Chromosome";
 import type { RNG } from "../types.js";
 
 export interface SelectionMethod {
-	select<A extends Agent>(population: A[], rng: RNG): A;
+	select<A extends Agent>(agents: readonly A[], rng: RNG): A;
 }
 
 export interface CrossoverMethod {
@@ -15,5 +15,5 @@ export interface CrossoverMethod {
 }
 
 export interface MutationMethod {
-	mutate(child: Chromosome, rng: RNG): void;
+	mutate(chromosome: Chromosome, rng: RNG): void;
 }

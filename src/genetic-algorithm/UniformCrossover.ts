@@ -12,8 +12,8 @@ export class UniformCrossover implements CrossoverMethod {
 			throw new Error("both parent must have equal number of genes");
 
 		const genes = chromosome_a.map((gene_a, i) => {
-			if (rng.generate(0, 0.5) < 0.5) return gene_a;
-			else return chromosome_b.at(i)!;
+			if (rng.generate(0, 1) < 0.5) return gene_a;
+			return chromosome_b.at(i)!;
 		});
 
 		return new Chromosome(genes);

@@ -2,7 +2,6 @@ import { RNG } from "../types.js";
 import { Agent } from "./Agent.js";
 import { Chromosome } from "./Chromosome.js";
 import { CrossoverMethod, MutationMethod, SelectionMethod } from "./Methods.js";
-import { Statistics } from "./Statistics.js";
 
 export class GeneticAlgorithm {
 	constructor(
@@ -13,18 +12,14 @@ export class GeneticAlgorithm {
 
 	evolve<A extends Agent>(
 		createAgent: (chromosome: Chromosome) => A,
-		population: A[],
+		agents: A[],
 		rng: RNG
-	): [agents: A[], statistics: Statistics] {
-		if (!population.length) throw new Error("expected at least 1 Agent");
+	) {
+		if (!agents.length) throw new Error("expected at least 1 Agent");
 
-		const agents = population.map(() => {
-			const parent_a = this.selectionMethod
-				.select(population, rng)
-				.chromosome();
-			const parent_b = this.selectionMethod
-				.select(population, rng)
-				.chromosome();
+		const new_agents = agents.map(() => {
+			const parent_a = this.selectionMethod.select(agents, rng).chromosome();
+			const parent_b = this.selectionMethod.select(agents, rng).chromosome();
 
 			const child = this.crossoverMethod.crossover(parent_a, parent_b, rng);
 			this.mutationMethod.mutate(child, rng);
@@ -32,6 +27,6 @@ export class GeneticAlgorithm {
 			return createAgent(child);
 		});
 
-		return [agents, new Statistics(population)];
+		return new_agents;
 	}
 }

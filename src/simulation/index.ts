@@ -8,7 +8,7 @@ import { RNG } from "../types.js";
 import { activation } from "../utils.js";
 import { Bird } from "./Bird.js";
 import { Config } from "./Config.js";
-import { Statistics } from "./Statistics.js";
+import { Statistics } from "../genetic-algorithm/index.js";
 import { World } from "./World.js";
 
 export class Simulation {
@@ -25,7 +25,7 @@ export class Simulation {
 		this.processCollusion(rng);
 		this.processBrains();
 		this.processMovements();
-		return this.tryEvolving(rng);
+		if (++this.age > this.config.sim_generation_length) return this.evolve(rng);
 	}
 
 	train(rng: RNG) {
@@ -43,7 +43,7 @@ export class Simulation {
 					animal.position[1] - food.position[1]
 				);
 
-				if (distance > 0.015) continue;
+				if (distance > this.config.food_size) continue;
 				animal.satiation++;
 				food.position = [rng.generate(0, 1), rng.generate(0, 1)];
 			}
@@ -57,10 +57,6 @@ export class Simulation {
 
 	processMovements() {
 		for (const animal of this.world.animals) animal.processMovement();
-	}
-
-	tryEvolving(rng: RNG) {
-		if (++this.age > this.config.sim_generation_length) return this.evolve(rng);
 	}
 
 	evolve(rng: RNG) {
@@ -86,19 +82,15 @@ export class Simulation {
 			new GaussianMutation(0.01, 0.3)
 		);
 
-		const [birds, statistics] = geneticAlgorithm.evolve(
-			Bird.create,
-			agents,
-			rng
-		);
+		const nextgen = geneticAlgorithm.evolve(Bird.create, agents, rng);
 
-		this.world.animals = birds.map(bird =>
+		this.world.animals = nextgen.map(bird =>
 			bird.toAnimal(this.config, activation, rng)
 		);
 
 		for (const food of this.world.foods)
 			food.position = [rng.generate(0, 1), rng.generate(0, 1)];
 
-		return new Statistics(this.generation - 1, statistics);
+		return new Statistics(agents, this.generation - 1);
 	}
 }

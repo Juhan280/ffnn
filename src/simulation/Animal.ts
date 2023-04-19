@@ -7,7 +7,7 @@ import { Eye } from "./Eye.js";
 import { Food } from "./Food.js";
 
 export class Animal {
-	#position: Vector2<true>;
+	position: Vector2<true>;
 	rotation: number;
 	vision: readonly number[];
 	#speed: number;
@@ -15,20 +15,12 @@ export class Animal {
 	satiation: number;
 
 	private constructor(config: Config, readonly brain: Brain, rng: RNG) {
-		this.#position = [rng.generate(0, 1), rng.generate(0, 1)];
+		this.position = [rng.generate(0, 1), rng.generate(0, 1)];
 		this.rotation = rng.generate(-Math.PI, Math.PI);
 		this.vision = Array(config.eye_cells).fill(0);
 		this.#speed = rng.generate(0, config.sim_speed_max); // XXX: need to look into that later
 		this.eye = new Eye(config);
 		this.satiation = 0;
-	}
-
-	get position(): Vector2<true> {
-		return this.#position;
-	}
-
-	set position(value: Vector2<true>) {
-		this.#position = value;
 	}
 
 	get speed() {
@@ -40,7 +32,7 @@ export class Animal {
 	}
 
 	processBrain(config: Config, foods: readonly Food[]) {
-		this.vision = this.eye.processVision(this.#position, this.rotation, foods);
+		this.vision = this.eye.processVision(this.position, this.rotation, foods);
 
 		const [speed, rotation] = this.brain.propagate(this.vision);
 
@@ -57,13 +49,13 @@ export class Animal {
 	}
 
 	processMovement() {
-		const time = 10;
+		const time = 1;
 		// i am not sure if it will work as expected
-		this.#position[0] += this.speed * Math.cos(this.rotation) * time;
-		this.#position[1] += this.speed * Math.sin(this.rotation) * time;
+		this.position[0] += this.speed * Math.cos(this.rotation) * time;
+		this.position[1] += this.speed * Math.sin(this.rotation) * time;
 
-		this.#position[0] = clamp(this.#position[0], 0, 1);
-		this.#position[1] = clamp(this.#position[1], 0, 1);
+		this.position[0] = clamp(this.position[0], 0, 1);
+		this.position[1] = clamp(this.position[1], 0, 1);
 	}
 
 	static random(config: Config, activation: ActivationFunction, rng: RNG) {
