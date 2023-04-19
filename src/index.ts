@@ -42,8 +42,7 @@ function loop() {
 	renderer.render();
 	if (stats) p.innerText = stats.toString();
 	// await new Promise(r => setTimeout(r, 300));
-	// window.requestAnimationFrame(loop);
+	window.requestAnimationFrame(loop);
 }
 
 loop();
-// setTimeout(loop, 0);
