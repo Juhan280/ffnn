@@ -1,10 +1,10 @@
-import { RNG } from "../types.js";
+import { ActivationFunction, RNG } from "../types.js";
 import { Layer } from "./Layer.js";
 
 export class Network {
 	private constructor(
 		readonly layers: readonly Layer[],
-		readonly activation: (value: number) => number
+		readonly activation: ActivationFunction
 	) {}
 
 	*weights() {
@@ -29,7 +29,7 @@ export class Network {
 
 	static random(
 		neuronCounts: readonly number[],
-		activation: (value: number) => number,
+		activation: ActivationFunction,
 		rng: RNG
 	) {
 		if (neuronCounts.length <= 1)
@@ -49,7 +49,7 @@ export class Network {
 
 	static fromWeights(
 		neuronCounts: readonly number[],
-		activation: (value: number) => number,
+		activation: ActivationFunction,
 		weights: Iterable<number>
 	) {
 		if (neuronCounts.length <= 1)

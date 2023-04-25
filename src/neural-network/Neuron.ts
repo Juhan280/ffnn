@@ -3,7 +3,7 @@ import { RNG } from "../types.js";
 export class Neuron {
 	private constructor(
 		readonly bias: number,
-		readonly weights: readonly number[]
+		readonly weights: Readonly<Float32Array>
 	) {}
 
 	propagate(inputs: readonly number[], activation: (value: number) => number) {
@@ -16,7 +16,8 @@ export class Neuron {
 
 	static random(inputs_size: number, rng: RNG) {
 		const bias = rng.generate(-1, 1);
-		const weights = Array.from({ length: inputs_size }, () =>
+
+		const weights = Float32Array.from({ length: inputs_size }, () =>
 			rng.generate(-1, 1)
 		);
 
@@ -27,7 +28,7 @@ export class Neuron {
 		const { value: bias, done } = weightsIter.next();
 		if (done) throw new Error("not enough weights");
 
-		const weights = Array.from({ length: inputs_size }, () => {
+		const weights = Float32Array.from({ length: inputs_size }, () => {
 			const { value: weight, done } = weightsIter.next();
 			if (done) throw new Error("not enough weights");
 			return weight;

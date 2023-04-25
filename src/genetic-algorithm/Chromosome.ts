@@ -1,8 +1,8 @@
 export class Chromosome {
-	private genes: number[];
+	private genes: Float32Array;
 
 	constructor(genes: Iterable<number>) {
-		this.genes = [...genes];
+		this.genes = new Float32Array(genes);
 	}
 
 	get length() {
@@ -25,7 +25,7 @@ export class Chromosome {
 		return this.genes.at(index);
 	}
 
-	map<R>(callbackfn: (gene: number, index: number) => R) {
+	map(callbackfn: (gene: number, index: number) => number) {
 		return this.genes.map((gene, index) => callbackfn(gene, index));
 	}
 }
