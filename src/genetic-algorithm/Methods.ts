@@ -1,5 +1,5 @@
 import { Agent } from "./Agent.js";
-import { Chromosome } from "./Chromosome";
+import { Chromosome } from "./Chromosome.js";
 import type { RNG } from "../types.js";
 
 export interface SelectionMethod {

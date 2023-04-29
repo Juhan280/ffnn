@@ -18,15 +18,13 @@ const rng: RNG = {
 	},
 };
 
-/*
-const food = new Food([0.27, 0.2]);
+const food = new Food([0.5, 0.5]);
 const animal = Animal.random(config, activation, rng);
-animal.position = [0.27, 0.27];
-animal.rotation = +Math.PI / 2;
+animal.position = [0.35, 0.35];
+animal.rotation = Math.PI * (1 / 4);
 const world = new World([animal], [food]);
-*/
 
-const world = World.random(config, activation, rng);
+// const world = World.random(config, activation, rng);
 const simulation = new Simulation(config, world, 0, 0);
 const renderer = new Renderer(canvas, 300, simulation, config);
 
@@ -34,15 +32,17 @@ const renderer = new Renderer(canvas, 300, simulation, config);
 
 // console.log(simulation);
 
-function loop() {
-	simulation.step(rng);
-	simulation.step(rng);
+async function loop() {
+	// simulation.step(rng);
+	// simulation.step(rng);
 
 	const stats = simulation.step(rng);
 	renderer.render();
 	if (stats) p.innerText = stats.toString();
-	// await new Promise(r => setTimeout(r, 300));
+	await new Promise(r => setTimeout(r, 300));
 	window.requestAnimationFrame(loop);
 }
 
 loop();
+
+// renderer.render()

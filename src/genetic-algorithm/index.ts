@@ -1,4 +1,4 @@
-export * from "./Agent";
+export * from "./Agent.js";
 export * from "./Chromosome.js";
 export * from "./GaussianMutation.js";
 export * from "./GeneticAlgorithm.js";

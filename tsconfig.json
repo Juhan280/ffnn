@@ -5,6 +5,7 @@
 		"incremental": true,
 		"target": "ESNext",
 		"module": "ESNext",
+		"moduleResolution": "nodenext",
 		"noEmit": true,
 		"removeComments": true,
 		"allowSyntheticDefaultImports": true,

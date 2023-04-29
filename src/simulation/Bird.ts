@@ -1,5 +1,5 @@
 import { Agent, Chromosome } from "../genetic-algorithm/index.js";
-import { RNG } from "../types";
+import { RNG } from "../types.js";
 import { ActivationFunction } from "../types.js";
 import { Animal } from "./Animal.js";
 import { Config } from "./Config.js";

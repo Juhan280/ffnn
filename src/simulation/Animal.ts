@@ -19,7 +19,7 @@ export class Animal {
 		this.rotation = rng.generate(-Math.PI, Math.PI);
 		this.vision = Array(config.eye_cells).fill(0);
 		this.#speed = rng.generate(0, config.sim_speed_max); // XXX: need to look into that later
-		this.eye = new Eye(config);
+		this.eye = new Eye(config.eye_fov_range, config.eye_fov_angle, config.eye_cells);
 		this.satiation = 0;
 	}
 
@@ -42,7 +42,7 @@ export class Animal {
 			config.sim_speed_max
 		);
 
-		this.rotation += rotation;
+		this.rotation += 0.1 //rotation;
 
 		// if (Math.abs(this.rotation) > Math.PI)
 		//	this.rotation = (this.rotation % Math.PI) * -1;

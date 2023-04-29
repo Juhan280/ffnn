@@ -1,23 +1,21 @@
 import { Vector2 } from "../types.js";
-import { Config } from "./Config.js";
+import { getAngleBetweenNormalAndFood } from "../utils.js";
 import { Food } from "./Food.js";
 
 export class Eye {
-	readonly fov_range: number;
-	readonly fov_angle: number;
+	readonly fov: {
+		readonly range: number;
+		readonly angle: number;
+	};
 	readonly cells: number;
 
-	constructor(config: Config) {
-		if (config.eye_fov_range <= 0)
-			throw new Error("fov range must be positive");
-		if (config.eye_fov_angle <= 0)
-			throw new Error("fov angle must be positive");
-		if (config.eye_cells <= 0)
-			throw new Error("number of eye cells must be positive");
+	constructor(range: number, angle: number, cells: number) {
+		if (range <= 0) throw new Error("fov range must be positive");
+		if (angle <= 0) throw new Error("fov angle must be positive");
+		if (cells <= 0) throw new Error("number of eye cells must be positive");
 
-		this.fov_range = config.eye_fov_range;
-		this.fov_angle = config.eye_fov_angle;
-		this.cells = config.eye_cells;
+		this.fov = { range, angle };
+		this.cells = cells;
 	}
 
 	processVision(position: Vector2, rotation: number, foods: readonly Food[]) {
@@ -27,22 +25,20 @@ export class Eye {
 		for (const food of foods) {
 			const distance = Math.hypot(x - food.position[0], y - food.position[1]);
 
-			if (distance > this.fov_range) continue;
+			if (distance > this.fov.range) continue;
 
-			// I am pretty sure that this formula of mine is wrong.
-			const angle = Math.PI + rotation - Math.acos(x / Math.hypot(x, y));
-			// console.log({ rotation, hypot: Math.hypot(x, y), angle, distance });
+			const angle = getAngleBetweenNormalAndFood(position, rotation, food);
 
-			if (Math.abs(angle) > this.fov_angle / 2) continue;
+			if (Math.abs(angle) > this.fov.angle / 2) continue;
 
 			const cell = Math.min(
 				Math.floor(
-					((angle + this.fov_angle / 2) / this.fov_angle) * this.cells
+					((angle + this.fov.angle / 2) / this.fov.angle) * this.cells
 				),
 				this.cells - 1
 			);
 
-			cells[cell] = (this.fov_range - distance) / this.fov_range;
+			cells[cell] = (this.fov.range - distance) / this.fov.range;
 		}
 
 		return cells;

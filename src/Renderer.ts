@@ -1,8 +1,7 @@
-import { Animal } from "./simulation/Animal";
-import { Config } from "./simulation/Config";
-import { Food } from "./simulation/Food";
-import { Simulation } from "./simulation/index";
-import { RNG, Vector2 } from "./types";
+import { Animal } from "./simulation/Animal.js";
+import { Config } from "./simulation/Config.js";
+import { Food } from "./simulation/Food.js";
+import { Simulation } from "./simulation/index.js";
 
 export class Renderer {
 	WORLD_SIZE: number;
@@ -78,9 +77,9 @@ export class Renderer {
 			this.ctx.arc(
 				x,
 				y,
-				animal.eye.fov_range * this.WORLD_SIZE,
-				rotation - eye.fov_angle / 2 + (eye.fov_angle / eye.cells) * i,
-				rotation - eye.fov_angle / 2 + (eye.fov_angle / eye.cells) * (i + 1)
+				animal.eye.fov.range * this.WORLD_SIZE,
+				rotation - eye.fov.angle / 2 + (eye.fov.angle / eye.cells) * i,
+				rotation - eye.fov.angle / 2 + (eye.fov.angle / eye.cells) * (i + 1)
 			);
 			this.ctx.fill();
 		}

@@ -5,6 +5,11 @@ function clamp(value, min, max) {
 function activation(value) {
   return 1 / (1 + Math.E ** -value);
 }
+function getAngleBetweenNormalAndFood(position, rotation, food2) {
+  const [aX, aY] = position;
+  const [fX, fY] = food2.position;
+  return Math.atan((fY - aY) / (fX - aX)) - rotation;
+}
 
 // src/genetic-algorithm/Agent.ts
 var Agent = class {
@@ -14,7 +19,7 @@ var Agent = class {
 var Chromosome = class {
   genes;
   constructor(genes) {
-    this.genes = [...genes];
+    this.genes = new Float32Array(genes);
   }
   get length() {
     return this.genes.length;
@@ -161,7 +166,7 @@ var Neuron = class {
   }
   static random(inputs_size, rng2) {
     const bias = rng2.generate(-1, 1);
-    const weights = Array.from(
+    const weights = Float32Array.from(
       { length: inputs_size },
       () => rng2.generate(-1, 1)
     );
@@ -171,7 +176,7 @@ var Neuron = class {
     const { value: bias, done } = weightsIter.next();
     if (done)
       throw new Error("not enough weights");
-    const weights = Array.from({ length: inputs_size }, () => {
+    const weights = Float32Array.from({ length: inputs_size }, () => {
       const { value: weight, done: done2 } = weightsIter.next();
       if (done2)
         throw new Error("not enough weights");
@@ -293,37 +298,35 @@ var Brain = class {
 
 // src/simulation/Eye.ts
 var Eye = class {
-  fov_range;
-  fov_angle;
+  fov;
   cells;
-  constructor(config2) {
-    if (config2.eye_fov_range <= 0)
+  constructor(range, angle, cells) {
+    if (range <= 0)
       throw new Error("fov range must be positive");
-    if (config2.eye_fov_angle <= 0)
+    if (angle <= 0)
       throw new Error("fov angle must be positive");
-    if (config2.eye_cells <= 0)
+    if (cells <= 0)
       throw new Error("number of eye cells must be positive");
-    this.fov_range = config2.eye_fov_range;
-    this.fov_angle = config2.eye_fov_angle;
-    this.cells = config2.eye_cells;
+    this.fov = { range, angle };
+    this.cells = cells;
   }
   processVision(position, rotation, foods) {
     const cells = Array(this.cells).fill(0);
     const [x, y] = position;
-    for (const food of foods) {
-      const distance = Math.hypot(x - food.position[0], y - food.position[1]);
-      if (distance > this.fov_range)
+    for (const food2 of foods) {
+      const distance = Math.hypot(x - food2.position[0], y - food2.position[1]);
+      if (distance > this.fov.range)
         continue;
-      const angle = Math.PI + rotation - Math.acos(x / Math.hypot(x, y));
-      if (Math.abs(angle) > this.fov_angle / 2)
+      const angle = getAngleBetweenNormalAndFood(position, rotation, food2);
+      if (Math.abs(angle) > this.fov.angle / 2)
         continue;
       const cell = Math.min(
         Math.floor(
-          (angle + this.fov_angle / 2) / this.fov_angle * this.cells
+          (angle + this.fov.angle / 2) / this.fov.angle * this.cells
         ),
         this.cells - 1
       );
-      cells[cell] = (this.fov_range - distance) / this.fov_range;
+      cells[cell] = (this.fov.range - distance) / this.fov.range;
     }
     return cells;
   }
@@ -337,7 +340,7 @@ var Animal = class {
     this.rotation = rng2.generate(-Math.PI, Math.PI);
     this.vision = Array(config2.eye_cells).fill(0);
     this.#speed = rng2.generate(0, config2.sim_speed_max);
-    this.eye = new Eye(config2);
+    this.eye = new Eye(config2.eye_fov_range, config2.eye_fov_angle, config2.eye_cells);
     this.satiation = 0;
   }
   position;
@@ -360,7 +363,7 @@ var Animal = class {
       config2.sim_speed_min,
       config2.sim_speed_max
     );
-    this.rotation += rotation;
+    this.rotation += 0.1;
   }
   processMovement() {
     const time = 1;
@@ -425,8 +428,8 @@ var Bird = class extends Agent {
   static create(chromosome) {
     return new Bird(0, chromosome);
   }
-  static fromAnimal(animal) {
-    return new Bird(animal.satiation, animal.chromosome());
+  static fromAnimal(animal2) {
+    return new Bird(animal2.satiation, animal2.chromosome());
   }
 };
 
@@ -454,26 +457,26 @@ var Simulation = class {
     }
   }
   processCollusion(rng2) {
-    for (const animal of this.world.animals) {
-      for (const food of this.world.foods) {
+    for (const animal2 of this.world.animals) {
+      for (const food2 of this.world.foods) {
         const distance = Math.hypot(
-          animal.position[0] - food.position[0],
-          animal.position[1] - food.position[1]
+          animal2.position[0] - food2.position[0],
+          animal2.position[1] - food2.position[1]
         );
         if (distance > this.config.food_size)
           continue;
-        animal.satiation++;
-        food.position = [rng2.generate(0, 1), rng2.generate(0, 1)];
+        animal2.satiation++;
+        food2.position = [rng2.generate(0, 1), rng2.generate(0, 1)];
       }
     }
   }
   processBrains() {
-    for (const animal of this.world.animals)
-      animal.processBrain(this.config, this.world.foods);
+    for (const animal2 of this.world.animals)
+      animal2.processBrain(this.config, this.world.foods);
   }
   processMovements() {
-    for (const animal of this.world.animals)
-      animal.processMovement();
+    for (const animal2 of this.world.animals)
+      animal2.processMovement();
   }
   evolve(rng2) {
     this.age = 0;
@@ -496,8 +499,8 @@ var Simulation = class {
     this.world.animals = nextgen.map(
       (bird) => bird.toAnimal(this.config, activation, rng2)
     );
-    for (const food of this.world.foods)
-      food.position = [rng2.generate(0, 1), rng2.generate(0, 1)];
+    for (const food2 of this.world.foods)
+      food2.position = [rng2.generate(0, 1), rng2.generate(0, 1)];
     return new Statistics(agents, this.generation - 1);
   }
 };
@@ -536,17 +539,17 @@ var Renderer = class {
   }
   WORLD_SIZE;
   ctx;
-  drawFood(food, style) {
-    const [x, y] = food.position.map((v) => v * this.WORLD_SIZE);
+  drawFood(food2, style) {
+    const [x, y] = food2.position.map((v) => v * this.WORLD_SIZE);
     this.ctx.fillStyle = style;
     this.ctx.beginPath();
     this.ctx.arc(x, y, this.config.food_size * this.WORLD_SIZE, 0, Math.PI * 2);
     this.ctx.fill();
   }
-  drawAnimal(animal, radius, style) {
-    const [x, y] = animal.position.map((v) => v * this.WORLD_SIZE);
-    const { rotation } = animal;
-    this.drawAnimalVision(animal);
+  drawAnimal(animal2, radius, style) {
+    const [x, y] = animal2.position.map((v) => v * this.WORLD_SIZE);
+    const { rotation } = animal2;
+    this.drawAnimalVision(animal2);
     this.ctx.fillStyle = style;
     this.ctx.beginPath();
     this.ctx.moveTo(
@@ -568,9 +571,9 @@ var Renderer = class {
     this.ctx.arc(x, y, 1, 0, Math.PI * 2);
     this.ctx.fill();
   }
-  drawAnimalVision(animal) {
-    const [x, y] = animal.position.map((v) => v * this.WORLD_SIZE);
-    const { eye, rotation, vision } = animal;
+  drawAnimalVision(animal2) {
+    const [x, y] = animal2.position.map((v) => v * this.WORLD_SIZE);
+    const { eye, rotation, vision } = animal2;
     for (let i = 0; i < eye.cells; i++) {
       this.ctx.fillStyle = `rgba(100, 100, 100, ${0.1 + vision[i] / 0.8})`;
       this.ctx.beginPath();
@@ -578,19 +581,19 @@ var Renderer = class {
       this.ctx.arc(
         x,
         y,
-        animal.eye.fov_range * this.WORLD_SIZE,
-        rotation - eye.fov_angle / 2 + eye.fov_angle / eye.cells * i,
-        rotation - eye.fov_angle / 2 + eye.fov_angle / eye.cells * (i + 1)
+        animal2.eye.fov.range * this.WORLD_SIZE,
+        rotation - eye.fov.angle / 2 + eye.fov.angle / eye.cells * i,
+        rotation - eye.fov.angle / 2 + eye.fov.angle / eye.cells * (i + 1)
       );
       this.ctx.fill();
     }
   }
   render() {
     this.ctx.clearRect(0, 0, this.WORLD_SIZE, this.WORLD_SIZE);
-    for (const food of this.simulation.world.foods)
-      this.drawFood(food, "green");
-    for (const animal of this.simulation.world.animals)
-      this.drawAnimal(animal, 10, "blue");
+    for (const food2 of this.simulation.world.foods)
+      this.drawFood(food2, "green");
+    for (const animal2 of this.simulation.world.animals)
+      this.drawAnimal(animal2, 10, "blue");
   }
 };
 
@@ -602,16 +605,19 @@ var rng = {
     return Math.random() * (max - min) + min;
   }
 };
-var world = World.random(config, activation, rng);
+var food = new Food([0.5, 0.5]);
+var animal = Animal.random(config, activation, rng);
+animal.position = [0.35, 0.35];
+animal.rotation = Math.PI * (1 / 4);
+var world = new World([animal], [food]);
 var simulation = new Simulation(config, world, 0, 0);
 var renderer = new Renderer(canvas, 300, simulation, config);
-function loop() {
-  simulation.step(rng);
-  simulation.step(rng);
+async function loop() {
   const stats = simulation.step(rng);
   renderer.render();
   if (stats)
     p.innerText = stats.toString();
+  await new Promise((r) => setTimeout(r, 300));
   window.requestAnimationFrame(loop);
 }
 loop();
