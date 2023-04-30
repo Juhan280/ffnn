@@ -40,9 +40,7 @@ export class Animal {
 	processBrain(config: Config, foods: readonly Food[]) {
 		this.vision = this.eye.processVision(this.position, this.rotation, foods);
 
-    if(this.vision.reduce((a,c) => a + c)) {
-      console.log(++i, this.vision)
-    }
+		// if (this.vision.reduce((a, c) => a + c)) console.log(++i, this.vision);
 
 		const [speed, rotation] = this.brain.propagate(this.vision);
 
