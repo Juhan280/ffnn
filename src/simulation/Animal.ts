@@ -6,6 +6,8 @@ import { Config } from "./Config.js";
 import { Eye } from "./Eye.js";
 import { Food } from "./Food.js";
 
+let i = 0;
+
 export class Animal {
 	position: Vector2<true>;
 	rotation: number;
@@ -19,7 +21,11 @@ export class Animal {
 		this.rotation = rng.generate(-Math.PI, Math.PI);
 		this.vision = Array(config.eye_cells).fill(0);
 		this.#speed = rng.generate(0, config.sim_speed_max); // XXX: need to look into that later
-		this.eye = new Eye(config.eye_fov_range, config.eye_fov_angle, config.eye_cells);
+		this.eye = new Eye(
+			config.eye_fov_range,
+			config.eye_fov_angle,
+			config.eye_cells
+		);
 		this.satiation = 0;
 	}
 
@@ -34,6 +40,10 @@ export class Animal {
 	processBrain(config: Config, foods: readonly Food[]) {
 		this.vision = this.eye.processVision(this.position, this.rotation, foods);
 
+    if(this.vision.reduce((a,c) => a + c)) {
+      console.log(++i, this.vision)
+    }
+
 		const [speed, rotation] = this.brain.propagate(this.vision);
 
 		this.#speed = clamp(
@@ -42,10 +52,10 @@ export class Animal {
 			config.sim_speed_max
 		);
 
-		this.rotation += 0.1 //rotation;
+		this.rotation += -0.1; //rotation;
 
-		// if (Math.abs(this.rotation) > Math.PI)
-		//	this.rotation = (this.rotation % Math.PI) * -1;
+		this.rotation %= Math.PI * 2;
+		if (this.rotation < 0) this.rotation += Math.PI * 2;
 	}
 
 	processMovement() {

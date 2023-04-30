@@ -29,9 +29,9 @@ var Chromosome = class {
       yield gene;
   }
   *iter_mut() {
-    for (let i = 0; i < this.genes.length; i++) {
-      const gene = this.genes[i];
-      const setGene = (gene2) => void (this.genes[i] = gene2);
+    for (let i2 = 0; i2 < this.genes.length; i2++) {
+      const gene = this.genes[i2];
+      const setGene = (gene2) => void (this.genes[i2] = gene2);
       yield [gene, setGene];
     }
   }
@@ -142,10 +142,10 @@ var UniformCrossover = class {
   crossover(chromosome_a, chromosome_b, rng2) {
     if (chromosome_a.length !== chromosome_b.length)
       throw new Error("both parent must have equal number of genes");
-    const genes = chromosome_a.map((gene_a, i) => {
+    const genes = chromosome_a.map((gene_a, i2) => {
       if (rng2.generate(0, 1) < 0.5)
         return gene_a;
-      return chromosome_b.at(i);
+      return chromosome_b.at(i2);
     });
     return new Chromosome(genes);
   }
@@ -159,7 +159,7 @@ var Neuron = class {
   }
   propagate(inputs, activation2) {
     const value = inputs.reduce(
-      (acc, cur, i) => acc + cur * this.weights[i],
+      (acc, cur, i2) => acc + cur * this.weights[i2],
       this.bias
     );
     return activation2(value);
@@ -238,10 +238,10 @@ var Network = class {
     if (neuronCounts.length <= 1)
       throw new RangeError("there must be at least 2 layers");
     const layers = Array(neuronCounts.length - 1);
-    for (let i = 0; i < neuronCounts.length - 1; i++) {
-      const input_neurons = neuronCounts[i];
-      const output_neurons = neuronCounts[i + 1];
-      layers[i] = Layer.random(input_neurons, output_neurons, rng2);
+    for (let i2 = 0; i2 < neuronCounts.length - 1; i2++) {
+      const input_neurons = neuronCounts[i2];
+      const output_neurons = neuronCounts[i2 + 1];
+      layers[i2] = Layer.random(input_neurons, output_neurons, rng2);
     }
     return new Network(layers, activation2);
   }
@@ -250,10 +250,10 @@ var Network = class {
       throw new RangeError("there must be at least 2 layers");
     const weightsIter = weights[Symbol.iterator]();
     const layers = Array(neuronCounts.length - 1);
-    for (let i = 0; i < neuronCounts.length - 1; i++) {
-      const input_neurons = neuronCounts[i];
-      const output_neurons = neuronCounts[i + 1];
-      layers[i] = Layer.fromWeights(input_neurons, output_neurons, weightsIter);
+    for (let i2 = 0; i2 < neuronCounts.length - 1; i2++) {
+      const input_neurons = neuronCounts[i2];
+      const output_neurons = neuronCounts[i2 + 1];
+      layers[i2] = Layer.fromWeights(input_neurons, output_neurons, weightsIter);
     }
     return new Network(layers, activation2);
   }
@@ -333,6 +333,7 @@ var Eye = class {
 };
 
 // src/simulation/Animal.ts
+var i = 0;
 var Animal = class {
   constructor(config2, brain, rng2) {
     this.brain = brain;
@@ -340,7 +341,11 @@ var Animal = class {
     this.rotation = rng2.generate(-Math.PI, Math.PI);
     this.vision = Array(config2.eye_cells).fill(0);
     this.#speed = rng2.generate(0, config2.sim_speed_max);
-    this.eye = new Eye(config2.eye_fov_range, config2.eye_fov_angle, config2.eye_cells);
+    this.eye = new Eye(
+      config2.eye_fov_range,
+      config2.eye_fov_angle,
+      config2.eye_cells
+    );
     this.satiation = 0;
   }
   position;
@@ -357,13 +362,19 @@ var Animal = class {
   }
   processBrain(config2, foods) {
     this.vision = this.eye.processVision(this.position, this.rotation, foods);
+    if (this.vision.reduce((a, c) => a + c)) {
+      console.log(++i, this.vision);
+    }
     const [speed, rotation] = this.brain.propagate(this.vision);
     this.#speed = clamp(
       this.#speed + speed,
       config2.sim_speed_min,
       config2.sim_speed_max
     );
-    this.rotation += 0.1;
+    this.rotation += -0.1;
+    this.rotation %= Math.PI * 2;
+    if (this.rotation < 0)
+      this.rotation += Math.PI * 2;
   }
   processMovement() {
     const time = 1;
@@ -574,16 +585,16 @@ var Renderer = class {
   drawAnimalVision(animal2) {
     const [x, y] = animal2.position.map((v) => v * this.WORLD_SIZE);
     const { eye, rotation, vision } = animal2;
-    for (let i = 0; i < eye.cells; i++) {
-      this.ctx.fillStyle = `rgba(100, 100, 100, ${0.1 + vision[i] / 0.8})`;
+    for (let i2 = 0; i2 < eye.cells; i2++) {
+      this.ctx.fillStyle = `rgba(100, 100, 100, ${0.1 + vision[i2] / 0.8})`;
       this.ctx.beginPath();
       this.ctx.moveTo(x, y);
       this.ctx.arc(
         x,
         y,
         animal2.eye.fov.range * this.WORLD_SIZE,
-        rotation - eye.fov.angle / 2 + eye.fov.angle / eye.cells * i,
-        rotation - eye.fov.angle / 2 + eye.fov.angle / eye.cells * (i + 1)
+        rotation - eye.fov.angle / 2 + eye.fov.angle / eye.cells * i2,
+        rotation - eye.fov.angle / 2 + eye.fov.angle / eye.cells * (i2 + 1)
       );
       this.ctx.fill();
     }
